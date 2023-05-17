@@ -41,7 +41,9 @@
                         viewCategories(Category.All());
                     break;
                     case ConsoleKey.Escape:
-                        Console.WriteLine("Bye");
+                        Console.Clear();
+                        Console.WriteLine("See you later....!");
+                        Thread.Sleep(1000);
                         return;
                     default:
                     break;
