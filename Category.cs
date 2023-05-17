@@ -2,30 +2,49 @@ namespace NMLT
 {
     public struct Category
     {
-        public string Code;
+        private static int lastId = 0;
+        private static HashSet<Category> categories = new HashSet<Category>();       
         public string Name;
+        public string ID;
         
-        public Category(string code, string name) {
-            this.Code = code;
+        public Category(string name) {
+            if (Has(name)) throw new Exception("Value exists.");
+            lastId += 1;
             this.Name = name;
+            this.ID = "C" + lastId;
+            categories.Add(this);
+        }
+
+        public static List<Category> All() {
+            return categories.ToList();
+        }
+
+        public static bool Has(string c) {
+            return categories.Any(x => x.Name.ToLower().Equals(c.ToLower()));
+        }
+
+        public static Category Add(string c) {
+            return new Category(c);
+        }
+
+        public static int Count {
+            get { return categories.Count; }
         }
     }
 
     public class CategoryHelper
     {
-        public static Category Input(string code, string name, string expiryDate, string company, int yearOfMan, string category)
-        {
-            Category p;
-            p.Code = code;
-            p.Name = name;
-            return p;
-        }
-
         public static void Print(Category p)
         {
-            Console.WriteLine("Product:");
+            Console.WriteLine("Category:");
             Console.WriteLine("Name: " + p.Name);
-            Console.WriteLine("Code: " + p.Code);
         }
+        public static void Table(List<Category> categories) {
+            var columns = new Dictionary<string, Func<Category, int, string>> {
+                {"Name", (x, _) => x.Name}, 
+            };
+            ConsoleHelper.WriteTable(categories, columns);
+        }
+       
     }
 }
