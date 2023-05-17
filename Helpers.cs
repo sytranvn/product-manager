@@ -25,5 +25,21 @@ namespace NMLT {
                 yFunc();
             }
         }
+
+        public static ConsoleKey Menu(string note, Dictionary<ConsoleKey, string> items, string backtext = "Back") {
+            Console.WriteLine(note);
+            foreach (var i in items) {
+                if (i.Key >= ConsoleKey.D0 && i.Key <= ConsoleKey.D9)
+                    Console.WriteLine("  " + (i.Key - ConsoleKey.D0) + ". " + i.Value);
+                else 
+                Console.WriteLine(("  " + i.Key.ToString()) + ". " + i.Value);
+            }
+            Console.WriteLine("Esc. " + backtext);
+            ConsoleKeyInfo k;
+            do {
+                k = Console.ReadKey(true);
+            } while (k.Key != ConsoleKey.Escape && !items.ContainsKey(k.Key));
+            return k.Key;
+        }
     }
 }

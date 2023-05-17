@@ -5,18 +5,14 @@
         public static List<Product> products = new List<Product>();
         public static HashSet<string> categories = new HashSet<string>();
 
-        public static int MainMenu() {
+        public static ConsoleKey MainMenu() {
             Console.Clear();
-            Console.WriteLine("Select function");
-            Console.WriteLine("1. Add new product");
-            Console.WriteLine("2. Add new category");
-            Console.WriteLine("3. Search product");
-            Console.WriteLine("4. Search category");
-            Console.WriteLine("-------------------");
-            Console.WriteLine("100. Exit");
-            int result;
-            int.TryParse(Console.ReadLine(), out result);
-            return result;
+            return ConsoleHelper.Menu("Select function", new Dictionary<ConsoleKey, string> {
+            {ConsoleKey.D1, "Add new product"},
+            {ConsoleKey.D2, "Add new category"},
+            {ConsoleKey.D3, "Search product"},
+            {ConsoleKey.D4, "Search category"}
+            }, "Exit");
         }
 
         public static void NewProduct() {
@@ -57,24 +53,19 @@
         public static void ViewProducts(List<Product> products) {
             Console.Clear();
             ProductHelper.Table(products);
-            Dictionary<int, string> functionMap = new Dictionary<int, string> {
-                {1, "code"},
-                {2, "name"},
-                {3, "expiry date"},
-                {4, "company"},
-                {5, "year of manufacture"},
-                {6, "category"}
+            Dictionary<ConsoleKey, string> items = new Dictionary<ConsoleKey, string> {
+                {ConsoleKey.D1, "code"},
+                {ConsoleKey.D2, "name"},
+                {ConsoleKey.D3, "expiry date"},
+                {ConsoleKey.D4, "company"},
+                {ConsoleKey.D5, "year of manufacture"},
+                {ConsoleKey.D6, "category"},
             };
-            foreach (var f in functionMap) {
-                Console.WriteLine(f.Key.ToString() + ". Search by " + f.Value);
-            }
-            Console.WriteLine("100. Back");
-            int searchOption = 0;
-            while (!functionMap.ContainsKey(searchOption)) {
-                int.TryParse(Console.ReadLine(), out searchOption);
-                if (searchOption == 100) break;
-                string searchString = ConsoleHelper.ReadLine("Enter " + functionMap[searchOption] + ": ");
-                ViewProducts(products.FindAll(x => ProductHelper.matchProduct(x, searchOption, searchString)));
+            ConsoleKey k = ConsoleHelper.Menu("Search by: ", items);
+            string searchString;
+            if (k != ConsoleKey.Escape) {
+                searchString = ConsoleHelper.ReadLine("Enter " + items[k] + ": ");
+                ViewProducts(products.FindAll(x => ProductHelper.matchProduct(x, k-ConsoleKey.D0, searchString)));
             }
         }
 
@@ -84,29 +75,32 @@
             products.Add(new Product("P3", "Product 3", "01/01/2023", "AMD", 2023, "Computer"));
             products.Add(new Product("P4", "Product 4", "01/01/2023", "AMD", 2023, "Computer"));
             products.Add(new Product("P5", "Product 5", "01/01/2023", "AMD", 2023, "Computer"));
-            int function = 0;
-            while (function != 100) {
+            ConsoleKey function;
+            do {
                 function = MainMenu();
                 switch (function)
                 {
-                    case 1:
+                    case ConsoleKey.D1:
                         NewProduct();
                         Console.ReadLine();
                     break;
-                    case 2:
+                    case ConsoleKey.D2:
                         NewCategory();
                         Console.ReadLine();
                     break;
-                    case 3:
+                    case ConsoleKey.D3:
                         ViewProducts(products);
                     break;
-                    case 4:
+                    case ConsoleKey.D4:
                     // do4
                     break;
+                    case ConsoleKey.Escape:
+                        Console.WriteLine("Bye");
+                        return;
                     default:
                     break;
                 }
-            } 
+            } while (true); 
         }
     }
 }
