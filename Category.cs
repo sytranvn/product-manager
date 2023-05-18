@@ -3,7 +3,7 @@ namespace NMLT
     public struct Category
     {
         private static int lastId = 0;
-        private static HashSet<Category> categories = new HashSet<Category>();       
+        private static List<Category> categories = new List<Category>();       
         public string Name;
         public string ID;
         
@@ -15,8 +15,8 @@ namespace NMLT
             categories.Add(this);
         }
 
-        public static List<Category> All() {
-            return categories.ToList();
+        public static ref List<Category> All() {
+            return ref categories;
         }
 
         public static bool Has(string c) {
@@ -35,12 +35,13 @@ namespace NMLT
             get { return categories.Count; }
         }
 
-        public static HashSet<Category> Init() {
+        public static ref List<Category> Init() {
             if (categories.Count == 0) {
-                Add("Phone");
-                Add("Computer");
+                Add("Mobile phone");
+                Add("CPU");
+                Add("GPU");
             }
-            return categories;
+            return ref categories;
         }
     }
 
@@ -55,10 +56,35 @@ namespace NMLT
         public static Category Edit(Category c)
         {
             Console.WriteLine("Update category");
-            var catIndex = Category.All().FindIndex(x => x.ID == c.ID);
-            var category = Category.All()[catIndex];
-            category.Name = ConsoleHelper.ReadLine("Name", c.Name);
-            Category.All()[catIndex] = category;
+            var categories = Category.All();
+            var catIndex = categories.FindIndex(x => x.ID == c.ID);
+            var category = categories[catIndex];
+            bool duplicated;
+            string newName;
+            do {
+                duplicated = false;
+                newName = ConsoleHelper.ReadLine("Enter new name", c.Name);
+                for (int i = 0; i < categories.Count; i++) {
+                    if (i != catIndex && categories[i].Name.ToLower().Equals(newName.ToLower())) {
+                        duplicated = true;
+                        Console.Write("Category name exists. ");
+                    }
+                }
+            }
+            while (duplicated);
+            category.Name = newName;
+            categories[catIndex] = category;
+            
+            var products = Product.All();
+            for (int i = 0; i < products.Count; i++) {
+                if (products[i].Category.ID.Equals(category.ID)) {
+                    // https://stackoverflow.com/a/414989 cannot update element property directly. Replace old element with updated one.
+                    var pc = products[i];
+                    pc.Category = category;
+                    products[i] = pc;
+                }
+            }
+
             return category;
         }
 
@@ -70,6 +96,17 @@ namespace NMLT
             };
             ConsoleHelper.WriteTable(categories, columns);
         }
-       
+
+        internal static void Delete(Category c)
+        {
+            if (Product.All().Exists(p => p.Category.Equals(c))) {
+                if (ConsoleHelper.Confirm("There are some products under this category. Do you really want to delete this category and products under it?")) {
+                    Product.All().FindAll(p => p.Category.Equals(c)).ForEach(p => Product.Remove(p));
+                } else {
+                    return;
+                }
+            }
+            Category.All().Remove(c);
+        }
     }
 }

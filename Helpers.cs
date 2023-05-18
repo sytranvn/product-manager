@@ -20,19 +20,26 @@ namespace NMLT {
 
         public static void ClearLines(int lines) {
             var origRow = Console.CursorTop;
-            for (int i = 0; i < lines; i++) {
+            for (int i = 0; i < lines + 1; i++) {
                 Console.SetCursorPosition(0, origRow - i);
                 Console.Write(new string(' ', Console.WindowWidth));
             }
         }
 
-        public static void Confirm(string note, Action yFunc) {
-            Console.Write(note);
-            Console.Write(" [y]/n: ");
-            var ans = Console.ReadLine();
-            if (String.IsNullOrEmpty(ans) || ans.ToLower() == "y" || ans.ToLower() == "yes") {
-                yFunc();
-            }
+        public static bool Confirm(string note) {
+            do {
+                Console.Write(note);
+                Console.Write(" [y]/n: ");
+                var ans = Console.ReadLine();
+                if (String.IsNullOrEmpty(ans) || ans.ToLower() == "y" || ans.ToLower() == "yes") {
+                    return true;
+                }
+                if (ans.ToLower() == "n" || ans.ToLower() == "no") {
+                    return false;
+                }
+                ClearLines(2);
+                Console.Write("Invalid option. ");
+            } while (true);
         }
 
         public static ConsoleKey MenuSelect(string note, Dictionary<ConsoleKey, string> items, string backtext = "Back") {
@@ -48,8 +55,23 @@ namespace NMLT {
             do {
                 k = Console.ReadKey(true);
             } while (k.Key != ConsoleKey.Escape && !items.ContainsKey(k.Key));
-            ConsoleHelper.ClearLines(items.Count + 2);
+            ConsoleHelper.ClearLines(items.Count + 1);
             return k.Key;
+        }
+
+        public static T TableSelect<T>(List<T> items, string note) {
+            int id = 0;
+            bool valid = false;
+            while (!valid) {
+                int.TryParse(ConsoleHelper.ReadLine(note), out id);
+                if (id > 0 && id <= items.Count) valid = true;
+                else {
+                    ConsoleHelper.ClearLines(1);
+                    Console.Write("Invalid option. ");
+                }
+
+            }
+            return items[id - 1];
         }
 
 

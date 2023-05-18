@@ -2,7 +2,7 @@
 {
     public class Program
     {
-        private static HashSet<Category> categories = Category.Init(); 
+        private static List<Category> categories = Category.Init(); 
         private static List<Product> products = Product.Init();
         private static ConsoleKey MainMenu() {
             Console.Clear();
@@ -26,7 +26,7 @@
                         viewProducts(ref products);
                     break;
                     case ConsoleKey.D2:
-                        viewCategories(Category.All());
+                        viewCategories(ref categories);
                     break;
                     case ConsoleKey.Escape:
                         Console.Clear();
@@ -39,7 +39,7 @@
             } while (true); 
         }
 
-        private static void viewCategories(List<Category> categories)
+        private static void viewCategories(ref List<Category> categories)
         {
             Console.Clear();
             CategoryHelper.Table(categories);
@@ -58,10 +58,10 @@
                     searchCategories(categories);
                     break;
                 case ConsoleKey.D3:
-                    editCategory();
+                    editCategory(categories);
                     break;
                 case ConsoleKey.D4:
-                    deleteCategory();
+                    deleteCategory(categories);
                     break;
                 default:
                     break;
@@ -70,16 +70,21 @@
 
         private static void searchCategories(List<Category> categories) {
             var searchString = ConsoleHelper.ReadLine("Enter name");
-            viewCategories(categories.FindAll(x => x.Name.ToLower().Contains(searchString.ToLower())));
+            var results = categories.FindAll(x => x.Name.ToLower().Contains(searchString.ToLower()));
+            viewCategories(ref results);
         }
         
-        private static void editCategory() {
-            Console.WriteLine("Not Implemented");
+        private static void editCategory(List<Category> categories) {
+            var c = ConsoleHelper.TableSelect(categories, "Select product # to update");
+            CategoryHelper.Edit(c);
+            Console.Write("Category " + c.Name + " has been updated.");
             Console.ReadLine();
         }
 
-        private static void deleteCategory() {
-            Console.WriteLine("Not Implemented");
+        private static void deleteCategory(List<Category> categories) {
+            var c = ConsoleHelper.TableSelect(categories, "Select product # to delete");
+            CategoryHelper.Delete(c);
+            Console.Write("Category " + c.Name + " has been deleted.");
             Console.ReadLine();
         }
 
@@ -102,10 +107,10 @@
                     searchProducts(products);
                     break;
                 case ConsoleKey.D3:
-                    editProduct(ref products);
+                    editProduct(products);
                     break;
                 case ConsoleKey.D4:
-                    deleteProduct();
+                    deleteProduct(products);
                     break;
                 default:
                     break;
@@ -138,35 +143,30 @@
             Product p = ProductHelper.Input("Please enter new product information");
             if (products.Exists(x => x.Code == p.Code)) {
                 Console.WriteLine("Product code " + p.Code + " is duplicated. Please check and enter product again.");
-                ConsoleHelper.Confirm("Re-enter information?", () => newProduct());
-                return;
+                if (ConsoleHelper.Confirm("Re-enter information?")) {
+                    newProduct();
+                    return;
+                }
             }
             products.Add(p);
             Console.WriteLine("Product " + p.Name + " added. (Total: " + products.Count + ")");
-            ConsoleHelper.Confirm("Do you want to add an other product? ", () => newProduct());
-        }
-
-
-        private static void editProduct(ref List<Product> products) {
-            int id = 0;
-            bool valid = false;
-            while (!valid) {
-                int.TryParse(ConsoleHelper.ReadLine("Select product # to update"), out id);
-                if (id > 0 && id <= products.Count) valid = true;
-                else {
-                    Console.Write("Invalid #");
-                    Console.ReadLine();
-                    ConsoleHelper.ClearLines(3);
-                }
-
+            if (ConsoleHelper.Confirm("Do you want to add an other product? ")) {
+                newProduct();
             }
-            var p = products[id - 1];
-            ProductHelper.Print(p);
-            ProductHelper.Edit(p);
         }
 
-        private static void deleteProduct() {
-            Console.WriteLine("Not Implemented");
+
+        private static void editProduct(List<Product> products) {
+            var p = ConsoleHelper.TableSelect(products, "Select product # to update");
+            ProductHelper.Edit(p);
+            Console.Write("Product " + p.Name + " has been updated.");
+            Console.ReadLine();
+        }
+
+        private static void deleteProduct(List<Product> products) {
+            var p = ConsoleHelper.TableSelect(products, "Select product # to delete");
+            ProductHelper.Delete(p);
+            Console.Write("Product " + p.Name + " has been deleted.");
             Console.ReadLine();
         }
 
@@ -178,9 +178,11 @@
                 Console.WriteLine("Category " + c + " added. (Total: " + Category.Count + ")");
             }
             else {
-                Console.WriteLine("Category " + c + "already exists. (Total: "+ Category.Count + ")");
+                Console.WriteLine("Category " + c + " already exists. (Total: "+ Category.Count + ")");
             }
-            ConsoleHelper.Confirm("Do you want to add an other category? ", () => newCategory());
+            if (ConsoleHelper.Confirm("Do you want to add an other category? ")) {
+                newCategory();
+            }
         }
     }
 }

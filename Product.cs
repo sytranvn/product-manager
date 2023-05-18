@@ -21,18 +21,22 @@ namespace NMLT
         }
 
         public static List<Product> Init() {
+            /* initialize sample data */
             if (products.Count == 0) {
                 Category.Init();
                 var phone = Category.All()[0];
-                var mobile = Category.All()[1];
+                var cpu = Category.All()[1];
+                var gpu = Category.All()[2];
                 products.AddRange(new List<Product>() {
-                    new Product("R3", "Ryzen 3", "01/01/2033", "AMD", 2023, Category.All()[1]),
-                    new Product("R4", "Ryzen 4", "01/01/2033", "AMD", 2023, Category.All()[1]),
-                    new Product("R5", "Ryzen 5", "01/01/2033", "AMD", 2023, Category.All()[1]),
-                    new Product("I3", "Core I 3", "01/01/2033", "Intel", 2023, Category.All()[1]),
-                    new Product("I4", "Core I 4", "01/01/2033", "Intel", 2023, Category.All()[1]),
-                    new Product("I5", "Core I 5", "01/01/2033", "Intel", 2023, Category.All()[1]),
-                    new Product("SS10", "Samsung S10", "01/01/2033", "Samsung", 2023, Category.All()[0]),
+                    new Product("R3", "Ryzen 3", "01/01/2033", "AMD", 2017, cpu),
+                    new Product("R5", "Ryzen 5", "01/01/2033", "AMD", 2018, cpu),
+                    new Product("R7", "Ryzen 7", "01/01/2033", "AMD", 2020, cpu),
+                    new Product("RX580", "Radeon RX 580", "01/01/2033", "AMD", 2023, gpu),
+                    new Product("I3", "Core I 3", "01/01/2033", "Intel", 2012, cpu),
+                    new Product("I5", "Core I 5", "01/01/2033", "Intel", 2014, cpu),
+                    new Product("I7", "Core I 7", "01/01/2033", "Intel", 2018, cpu),
+                    new Product("RTX3050", "GeForce RTX 3050", "10/10/2022", "NVDIA", 2020, gpu),
+                    new Product("SS10", "Samsung S10", "01/01/2033", "Samsung", 2023, phone),
                 });
             }
             return products;
@@ -40,6 +44,10 @@ namespace NMLT
 
         public static ref List<Product> All() {
             return ref products;
+        }
+
+        public static void Remove(Product p) {
+            products.Remove(p);
         }
     }
 
@@ -70,7 +78,7 @@ namespace NMLT
 
         public static Product Edit(Product p)
         {
-            Console.WriteLine("Update product");
+            Console.WriteLine("Updating product: " + p.Name);
             var productIndex = Product.All().FindIndex(x => x.Code == p.Code);
             var product = Product.All()[productIndex];
             product.Code = ConsoleHelper.ReadLine("Code", p.Code);
@@ -138,6 +146,11 @@ namespace NMLT
                     break;
             }
             return false;
+        }
+
+        internal static void Delete(Product p)
+        {
+            Product.All().Remove(p);
         }
     }
 }
