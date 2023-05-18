@@ -23,12 +23,24 @@ namespace NMLT
             return categories.Any(x => x.Name.ToLower().Equals(c.ToLower()));
         }
 
+        public static Category Find(Func<Category, bool> predicate) {
+            return categories.Where(predicate).First();
+        }
+
         public static Category Add(string c) {
             return new Category(c);
         }
 
         public static int Count {
             get { return categories.Count; }
+        }
+
+        public static HashSet<Category> Init() {
+            if (categories.Count == 0) {
+                Add("Phone");
+                Add("Computer");
+            }
+            return categories;
         }
     }
 
@@ -39,6 +51,19 @@ namespace NMLT
             Console.WriteLine("Category:");
             Console.WriteLine("Name: " + p.Name);
         }
+
+        public static Category Edit(Category c)
+        {
+            Console.WriteLine("Update category");
+            var catIndex = Category.All().FindIndex(x => x.ID == c.ID);
+            var category = Category.All()[catIndex];
+            category.Name = ConsoleHelper.ReadLine("Name", c.Name);
+            Category.All()[catIndex] = category;
+            return category;
+        }
+
+
+
         public static void Table(List<Category> categories) {
             var columns = new Dictionary<string, Func<Category, int, string>> {
                 {"Name", (x, _) => x.Name}, 

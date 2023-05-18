@@ -2,8 +2,8 @@
 {
     public class Program
     {
-        
-        private static List<Product> products = new List<Product>();
+        private static HashSet<Category> categories = Category.Init(); 
+        private static List<Product> products = Product.Init();
         private static ConsoleKey MainMenu() {
             Console.Clear();
             return ConsoleHelper.MenuSelect(
@@ -17,25 +17,13 @@
         }
 
         public static void Main() {
-            Category.Add("Phone");
-            Category.Add("Computer");
-            products = new List<Product> {
-                new Product("R3", "Ryzen 3", "01/01/2033", "AMD", 2023, Category.All()[1]),
-                new Product("R4", "Ryzen 4", "01/01/2033", "AMD", 2023, Category.All()[1]),
-                new Product("R5", "Ryzen 5", "01/01/2033", "AMD", 2023, Category.All()[1]),
-                new Product("I3", "Core I 3", "01/01/2033", "Intel", 2023, Category.All()[1]),
-                new Product("I4", "Core I 4", "01/01/2033", "Intel", 2023, Category.All()[1]),
-                new Product("I5", "Core I 5", "01/01/2033", "Intel", 2023, Category.All()[1]),
-                new Product("SS10", "Samsung S10", "01/01/2033", "Samsung", 2023, Category.All()[0]),
-            };
-
             ConsoleKey function;
             do {
                 function = MainMenu();
                 switch (function)
                 {
                     case ConsoleKey.D1:
-                        viewProducts(products);
+                        viewProducts(ref products);
                     break;
                     case ConsoleKey.D2:
                         viewCategories(Category.All());
@@ -95,7 +83,7 @@
             Console.ReadLine();
         }
 
-        private static void viewProducts(List<Product> products) {
+        private static void viewProducts(ref List<Product> products) {
             Console.Clear();
             ProductHelper.Table(products);
             Dictionary<ConsoleKey, string> items = new Dictionary<ConsoleKey, string> {
@@ -114,7 +102,7 @@
                     searchProducts(products);
                     break;
                 case ConsoleKey.D3:
-                    editProduct();
+                    editProduct(ref products);
                     break;
                 case ConsoleKey.D4:
                     deleteProduct();
@@ -136,7 +124,12 @@
             string searchString;
             if (k != ConsoleKey.Escape) {
                 searchString = ConsoleHelper.ReadLine("Enter " + items[k]);
-                viewProducts(products.FindAll(x => ProductHelper.matchProduct(x, k-ConsoleKey.D0, searchString)));
+                var products2 = products.FindAll(x => ProductHelper.matchProduct(
+                            x,
+                            k-ConsoleKey.D0,
+                            searchString)
+                        );
+                viewProducts(ref products2);
             }
         }
 
@@ -154,9 +147,22 @@
         }
 
 
-        private static void editProduct() {
-            Console.WriteLine("Not Implemented");
-            Console.ReadLine();
+        private static void editProduct(ref List<Product> products) {
+            int id = 0;
+            bool valid = false;
+            while (!valid) {
+                int.TryParse(ConsoleHelper.ReadLine("Select product # to update"), out id);
+                if (id > 0 && id <= products.Count) valid = true;
+                else {
+                    Console.Write("Invalid #");
+                    Console.ReadLine();
+                    ConsoleHelper.ClearLines(3);
+                }
+
+            }
+            var p = products[id - 1];
+            ProductHelper.Print(p);
+            ProductHelper.Edit(p);
         }
 
         private static void deleteProduct() {

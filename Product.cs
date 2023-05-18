@@ -2,6 +2,8 @@ namespace NMLT
 {
     public struct Product
     {
+        private static List<Product> products = new List<Product>();
+
         public string Code;
         public string Name;
         public DateTime ExpiryDate;
@@ -16,6 +18,28 @@ namespace NMLT
             this.Company = company;
             this.YearOfManufacture = year;
             this.Category = category;
+        }
+
+        public static List<Product> Init() {
+            if (products.Count == 0) {
+                Category.Init();
+                var phone = Category.All()[0];
+                var mobile = Category.All()[1];
+                products.AddRange(new List<Product>() {
+                    new Product("R3", "Ryzen 3", "01/01/2033", "AMD", 2023, Category.All()[1]),
+                    new Product("R4", "Ryzen 4", "01/01/2033", "AMD", 2023, Category.All()[1]),
+                    new Product("R5", "Ryzen 5", "01/01/2033", "AMD", 2023, Category.All()[1]),
+                    new Product("I3", "Core I 3", "01/01/2033", "Intel", 2023, Category.All()[1]),
+                    new Product("I4", "Core I 4", "01/01/2033", "Intel", 2023, Category.All()[1]),
+                    new Product("I5", "Core I 5", "01/01/2033", "Intel", 2023, Category.All()[1]),
+                    new Product("SS10", "Samsung S10", "01/01/2033", "Samsung", 2023, Category.All()[0]),
+                });
+            }
+            return products;
+        }
+
+        public static ref List<Product> All() {
+            return ref products;
         }
     }
 
@@ -42,6 +66,30 @@ namespace NMLT
                 Console.WriteLine("Category " + category + " is new. Added to category list.");
             }
             return p;
+        }
+
+        public static Product Edit(Product p)
+        {
+            Console.WriteLine("Update product");
+            var productIndex = Product.All().FindIndex(x => x.Code == p.Code);
+            var product = Product.All()[productIndex];
+            product.Code = ConsoleHelper.ReadLine("Code", p.Code);
+            product.Name = ConsoleHelper.ReadLine("Name", p.Name);
+            string expiryDate = "";
+            while (!DateTime.TryParse(expiryDate, out product.ExpiryDate)) {
+                expiryDate = ConsoleHelper.ReadLine("Expiry date", p.ExpiryDate.ToString("dd/MM/yyyy")); 
+            }
+            product.Company = ConsoleHelper.ReadLine("Company", p.Company);
+            product.YearOfManufacture = int.Parse(ConsoleHelper.ReadLine("Year of manufacture", DateTime.Now.Year.ToString()));
+            var category = ConsoleHelper.ReadLine("Category", p.Category.Name);
+            if (Category.Has(category)) {
+                product.Category = Category.All().Find(x => x.Name.ToLower().Equals(category));
+            } else {
+                product.Category = Category.Add(category);
+                Console.WriteLine("Category " + category + " is new. Added to category list.");
+            }
+            Product.All()[productIndex] = product;
+            return product;
         }
 
         public static void Print(Product p)
@@ -76,17 +124,14 @@ namespace NMLT
                 case 2:
                     return x.Name.ToLower().Contains(searchString.ToLower());
                 case 3:
-                    // return x.ExpiryDate.
-                    // TODO
-                    return false;
+                    DateTime searchDate;
+                    DateTime.TryParse(searchString, out searchDate);
+                    return x.ExpiryDate.Equals(searchDate);
                 case 4:
                     return x.Company.ToLower().Contains(searchString.ToLower());
                 case 5:
-                    int yom;
-                    if (int.TryParse(searchString, out yom)) {
-                        return x.YearOfManufacture == yom;
-                    }
-                        return false;
+                    int yom = int.MinValue;
+                    return x.YearOfManufacture == yom;
                 case 6:
                     return x.Category.Name.ToLower().Equals(searchString.ToLower());
                 default:
