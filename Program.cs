@@ -2,15 +2,16 @@
 {
     public class Program
     {
-        private static List<Category> categories = Category.Init(); 
-        private static List<Product> products = Product.Init();
+        private static List<Category> categories = Category.All();
+        private static List<Product> products = Product.All();
         private static ConsoleKey MainMenu() {
             Console.Clear();
             return ConsoleHelper.MenuSelect(
                 "Select function",
                 new Dictionary<ConsoleKey, string> {
                     {ConsoleKey.D1, "View all products"},
-                    {ConsoleKey.D2, "View all categories"}
+                    {ConsoleKey.D2, "View all categories"},
+                    {ConsoleKey.D3, "Initialize sample data"},
                 },
                 "Exit"
             );
@@ -28,15 +29,20 @@
                     case ConsoleKey.D2:
                         viewCategories(ref categories);
                     break;
+                    case ConsoleKey.D3:
+                        Product.Init();
+                        Console.Write("Data imported.");
+                        Console.ReadLine();
+                    break;
                     case ConsoleKey.Escape:
                         Console.Clear();
                         Console.WriteLine("See you later....!");
                         Thread.Sleep(1000);
-                        return;
+                    return;
                     default:
                     break;
                 }
-            } while (true); 
+            } while (true);
         }
 
         private static void viewCategories(ref List<Category> categories)
@@ -73,7 +79,7 @@
             var results = categories.FindAll(x => x.Name.ToLower().Contains(searchString.ToLower()));
             viewCategories(ref results);
         }
-        
+
         private static void editCategory(List<Category> categories) {
             var c = ConsoleHelper.TableSelect(categories, "Select product # to update");
             CategoryHelper.Edit(c);

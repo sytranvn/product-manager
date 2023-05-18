@@ -10,7 +10,7 @@ namespace NMLT
         public string Company;
         public int YearOfManufacture;
         public Category Category;
-        
+
         public Product(string code, string name, string expiryDate, string company, int year, Category category) {
             this.Code = code;
             this.Name = name;
@@ -28,15 +28,15 @@ namespace NMLT
                 var cpu = Category.All()[1];
                 var gpu = Category.All()[2];
                 products.AddRange(new List<Product>() {
-                    new Product("R3", "Ryzen 3", "01/01/2033", "AMD", 2017, cpu),
-                    new Product("R5", "Ryzen 5", "01/01/2033", "AMD", 2018, cpu),
-                    new Product("R7", "Ryzen 7", "01/01/2033", "AMD", 2020, cpu),
-                    new Product("RX580", "Radeon RX 580", "01/01/2033", "AMD", 2023, gpu),
-                    new Product("I3", "Core I 3", "01/01/2033", "Intel", 2012, cpu),
-                    new Product("I5", "Core I 5", "01/01/2033", "Intel", 2014, cpu),
-                    new Product("I7", "Core I 7", "01/01/2033", "Intel", 2018, cpu),
-                    new Product("RTX3050", "GeForce RTX 3050", "10/10/2022", "NVDIA", 2020, gpu),
-                    new Product("SS10", "Samsung S10", "01/01/2033", "Samsung", 2023, phone),
+                    new Product("R3", "Ryzen 3", "22/11/2025", "AMD", 2017, cpu),
+                    new Product("R5", "Ryzen 5", "15/02/2033", "AMD", 2018, cpu),
+                    new Product("R7", "Ryzen 7", "31/01/2027", "AMD", 2020, cpu),
+                    new Product("RX580", "Radeon RX 580", "01/06/2033", "AMD", 2023, gpu),
+                    new Product("I3", "Core i3", "02/12/2030", "Intel", 2012, cpu),
+                    new Product("I5", "Core i5", "21/12/2031", "Intel", 2014, cpu),
+                    new Product("I7", "Core i7", "01/01/2033", "Intel", 2018, cpu),
+                    new Product("RTX3050", "GeForce RTX 3050", "10/10/2028", "NVDIA", 2020, gpu),
+                    new Product("SS10", "Samsung S10", "01/01/2019", "Samsung", 2023, phone),
                 });
             }
             return products;
@@ -62,7 +62,7 @@ namespace NMLT
             string expiryDate = "";
             string nextYear = DateTime.Now.AddYears(1).ToString("dd/MM/yyyy");
             while (!DateTime.TryParse(expiryDate, out p.ExpiryDate)) {
-                expiryDate = ConsoleHelper.ReadLine("Expiry date", nextYear); 
+                expiryDate = ConsoleHelper.ReadLine("Expiry date", nextYear);
             }
             p.Company = ConsoleHelper.ReadLine("Company");
             p.YearOfManufacture = int.Parse(ConsoleHelper.ReadLine("Year of manufacture", DateTime.Now.Year.ToString()));
@@ -85,7 +85,7 @@ namespace NMLT
             product.Name = ConsoleHelper.ReadLine("Name", p.Name);
             string expiryDate = "";
             while (!DateTime.TryParse(expiryDate, out product.ExpiryDate)) {
-                expiryDate = ConsoleHelper.ReadLine("Expiry date", p.ExpiryDate.ToString("dd/MM/yyyy")); 
+                expiryDate = ConsoleHelper.ReadLine("Expiry date", p.ExpiryDate.ToString("dd/MM/yyyy"));
             }
             product.Company = ConsoleHelper.ReadLine("Company", p.Company);
             product.YearOfManufacture = int.Parse(ConsoleHelper.ReadLine("Year of manufacture", DateTime.Now.Year.ToString()));
@@ -115,7 +115,7 @@ namespace NMLT
         public static void Table(List<Product> products) {
             var columns = new Dictionary<string, Func<Product, int, string>> {
                 {"Code", (x, _) => x.Code},
-                {"Name", (x, _) => x.Name}, 
+                {"Name", (x, _) => x.Name},
                 {"Expiry date", (x, _) => x.ExpiryDate.ToString("dd/MM/yyyy")},
                 {"Company", (x, _) => x.Company},
                 {"YOM", (x, _) => x.YearOfManufacture.ToString()},
