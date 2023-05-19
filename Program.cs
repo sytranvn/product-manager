@@ -49,12 +49,16 @@
         {
             Console.Clear();
             CategoryHelper.Table(categories);
-            var items = new Dictionary<ConsoleKey, string> {
-                {ConsoleKey.D1, "Add new category"},
-                {ConsoleKey.D2, "Search for categories"},
-                {ConsoleKey.D3, "Edit a category"},
-                {ConsoleKey.D4, "Delete a category"},
-            };
+            var items = categories.Count == 0 ?
+                new Dictionary<ConsoleKey, string> {
+                    {ConsoleKey.D1, "Add new category"}
+                }
+                : new Dictionary<ConsoleKey, string> {
+                    {ConsoleKey.D1, "Add new category"},
+                    {ConsoleKey.D2, "Search for categories"},
+                    {ConsoleKey.D3, "Edit a category"},
+                    {ConsoleKey.D4, "Delete a category"},
+                };
             var k = ConsoleHelper.MenuSelect("Select option:", items);
             switch (k) {
                 case ConsoleKey.D1:
@@ -97,12 +101,15 @@
         private static void viewProducts(ref List<Product> products) {
             Console.Clear();
             ProductHelper.Table(products);
-            Dictionary<ConsoleKey, string> items = new Dictionary<ConsoleKey, string> {
-                {ConsoleKey.D1, "Add new product"},
-                {ConsoleKey.D2, "Search for products"},
-                {ConsoleKey.D3, "Edit a product"},
-                {ConsoleKey.D4, "Delete a product"},
-            };
+            Dictionary<ConsoleKey, string> items = products.Count == 0 ?
+                new Dictionary<ConsoleKey, string> {
+                    {ConsoleKey.D1, "Add new product"},
+                } : new Dictionary<ConsoleKey, string> {
+                    {ConsoleKey.D1, "Add new product"},
+                    {ConsoleKey.D2, "Search for products"},
+                    {ConsoleKey.D3, "Edit a product"},
+                    {ConsoleKey.D4, "Delete a product"},
+                };
             ConsoleKey k = ConsoleHelper.MenuSelect("", items, "Back");
 
             switch (k) {

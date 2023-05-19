@@ -105,6 +105,9 @@ namespace NMLT {
             foreach (var c in colums) {
                 addColumn(items, c.Key, c.Value, ref rows, ref maxLen);
             }
+            if (items.Count == 0) {
+                rows.Insert(3, "| No data ");
+            }
             foreach (var row in rows) {
                 Console.WriteLine(row + new string(' ', maxLen - row.Length) + "|");
             }
