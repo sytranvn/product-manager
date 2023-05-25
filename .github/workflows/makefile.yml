@@ -1,0 +1,24 @@
+name: Makefile CI
+
+on:
+  push:
+    branches: [ "master" ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: install dotnet
+      run: apt update && apt install -y dotnet-sdk-7.0
+
+    - name: Build
+      run: make
+      
+    - name: Zip
+      run: tar -zcvf release.tar.gz ./bin
+      
+    - uses: actions/upload-artifact@v3.1.2
+      with:
+        path: release.tar.gz
+        
