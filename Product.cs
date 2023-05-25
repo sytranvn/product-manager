@@ -1,4 +1,4 @@
-namespace NMLT
+namespace ProductManager
 {
     public struct Product
     {
@@ -11,7 +11,8 @@ namespace NMLT
         public int YearOfManufacture;
         public Category Category;
 
-        public Product(string code, string name, string expiryDate, string company, int year, Category category) {
+        public Product(string code, string name, string expiryDate, string company, int year, Category category)
+        {
             this.Code = code;
             this.Name = name;
             DateTime.TryParse(expiryDate, out this.ExpiryDate);
@@ -20,9 +21,11 @@ namespace NMLT
             this.Category = category;
         }
 
-        public static List<Product> Init() {
+        public static List<Product> Init()
+        {
             /* initialize sample data */
-            if (products.Count == 0) {
+            if (products.Count == 0)
+            {
                 Category.Init();
                 var phone = Category.All()[0];
                 var cpu = Category.All()[1];
@@ -42,11 +45,13 @@ namespace NMLT
             return products;
         }
 
-        public static ref List<Product> All() {
+        public static ref List<Product> All()
+        {
             return ref products;
         }
 
-        public static void Remove(Product p) {
+        public static void Remove(Product p)
+        {
             products.Remove(p);
         }
     }
@@ -61,15 +66,19 @@ namespace NMLT
             p.Name = ConsoleHelper.ReadLine("Name");
             string expiryDate = "";
             string nextYear = DateTime.Now.AddYears(1).ToString("dd/MM/yyyy");
-            while (!DateTime.TryParse(expiryDate, out p.ExpiryDate)) {
+            while (!DateTime.TryParse(expiryDate, out p.ExpiryDate))
+            {
                 expiryDate = ConsoleHelper.ReadLine("Expiry date", nextYear);
             }
             p.Company = ConsoleHelper.ReadLine("Company");
             p.YearOfManufacture = int.Parse(ConsoleHelper.ReadLine("Year of manufacture", DateTime.Now.Year.ToString()));
             var category = ConsoleHelper.ReadLine("Category");
-            if (Category.Has(category)) {
+            if (Category.Has(category))
+            {
                 p.Category = Category.All().Find(x => x.Name.ToLower().Equals(category));
-            } else {
+            }
+            else
+            {
                 p.Category = Category.Add(category);
                 Console.WriteLine("Category " + category + " is new. Added to category list.");
             }
@@ -84,15 +93,19 @@ namespace NMLT
             product.Code = ConsoleHelper.ReadLine("Code", p.Code);
             product.Name = ConsoleHelper.ReadLine("Name", p.Name);
             string expiryDate = "";
-            while (!DateTime.TryParse(expiryDate, out product.ExpiryDate)) {
+            while (!DateTime.TryParse(expiryDate, out product.ExpiryDate))
+            {
                 expiryDate = ConsoleHelper.ReadLine("Expiry date", p.ExpiryDate.ToString("dd/MM/yyyy"));
             }
             product.Company = ConsoleHelper.ReadLine("Company", p.Company);
             product.YearOfManufacture = int.Parse(ConsoleHelper.ReadLine("Year of manufacture", DateTime.Now.Year.ToString()));
             var category = ConsoleHelper.ReadLine("Category", p.Category.Name);
-            if (Category.Has(category)) {
+            if (Category.Has(category))
+            {
                 product.Category = Category.All().Find(x => x.Name.ToLower().Equals(category));
-            } else {
+            }
+            else
+            {
                 product.Category = Category.Add(category);
                 Console.WriteLine("Category " + category + " is new. Added to category list.");
             }
@@ -112,7 +125,8 @@ namespace NMLT
         }
 
 
-        public static void Table(List<Product> products) {
+        public static void Table(List<Product> products)
+        {
             var columns = new Dictionary<string, Func<Product, int, string>> {
                 {"Code", (x, _) => x.Code},
                 {"Name", (x, _) => x.Name},
@@ -126,7 +140,8 @@ namespace NMLT
 
         internal static bool matchProduct(Product x, int searchOption, string searchString)
         {
-            switch (searchOption) {
+            switch (searchOption)
+            {
                 case 1:
                     return x.Code.ToLower().Contains(searchString.ToLower());
                 case 2:

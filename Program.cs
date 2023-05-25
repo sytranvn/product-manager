@@ -1,10 +1,11 @@
-﻿namespace NMLT
+﻿namespace ProductManager
 {
     public class Program
     {
         private static List<Category> categories = Category.All();
         private static List<Product> products = Product.All();
-        private static ConsoleKey MainMenu() {
+        private static ConsoleKey MainMenu()
+        {
             Console.Clear();
             return ConsoleHelper.MenuSelect(
                 "Select function",
@@ -17,31 +18,33 @@
             );
         }
 
-        public static void Main() {
+        public static void Main()
+        {
             ConsoleKey function;
             ConsoleHelper.Banner();
-            do {
+            do
+            {
                 function = MainMenu();
                 switch (function)
                 {
                     case ConsoleKey.D1:
                         viewProducts(ref products);
-                    break;
+                        break;
                     case ConsoleKey.D2:
                         viewCategories(ref categories);
-                    break;
+                        break;
                     case ConsoleKey.D3:
                         Product.Init();
                         Console.Write("Data imported.");
                         Console.ReadLine();
-                    break;
+                        break;
                     case ConsoleKey.Escape:
                         Console.Clear();
                         Console.WriteLine("See you later....!");
                         Thread.Sleep(1000);
-                    return;
+                        return;
                     default:
-                    break;
+                        break;
                 }
             } while (true);
         }
@@ -61,7 +64,8 @@
                     {ConsoleKey.D4, "Delete a category"},
                 };
             var k = ConsoleHelper.MenuSelect("Select option:", items);
-            switch (k) {
+            switch (k)
+            {
                 case ConsoleKey.D1:
                     newCategory();
                     break;
@@ -79,27 +83,31 @@
             }
         }
 
-        private static void searchCategories(List<Category> categories) {
+        private static void searchCategories(List<Category> categories)
+        {
             var searchString = ConsoleHelper.ReadLine("Enter name");
             var results = categories.FindAll(x => x.Name.ToLower().Contains(searchString.ToLower()));
             viewCategories(ref results);
         }
 
-        private static void editCategory(List<Category> categories) {
+        private static void editCategory(List<Category> categories)
+        {
             var c = ConsoleHelper.TableSelect(categories, "Select product # to update");
             CategoryHelper.Edit(c);
             Console.Write("Category " + c.Name + " has been updated.");
             Console.ReadLine();
         }
 
-        private static void deleteCategory(List<Category> categories) {
+        private static void deleteCategory(List<Category> categories)
+        {
             var c = ConsoleHelper.TableSelect(categories, "Select product # to delete");
             CategoryHelper.Delete(c);
             Console.Write("Category " + c.Name + " has been deleted.");
             Console.ReadLine();
         }
 
-        private static void viewProducts(ref List<Product> products) {
+        private static void viewProducts(ref List<Product> products)
+        {
             Console.Clear();
             ProductHelper.Table(products);
             Dictionary<ConsoleKey, string> items = products.Count == 0 ?
@@ -113,7 +121,8 @@
                 };
             ConsoleKey k = ConsoleHelper.MenuSelect("", items, "Back");
 
-            switch (k) {
+            switch (k)
+            {
                 case ConsoleKey.D1:
                     newProduct();
                     break;
@@ -130,7 +139,8 @@
                     break;
             }
         }
-        private static void searchProducts(List<Product> products) {
+        private static void searchProducts(List<Product> products)
+        {
             var items = new Dictionary<ConsoleKey, string> {
                 {ConsoleKey.D1, "code"},
                 {ConsoleKey.D2, "name"},
@@ -141,60 +151,71 @@
             };
             ConsoleKey k = ConsoleHelper.MenuSelect("Search by: ", items);
             string searchString;
-            if (k != ConsoleKey.Escape) {
+            if (k != ConsoleKey.Escape)
+            {
                 searchString = ConsoleHelper.ReadLine("Enter " + items[k]);
                 var products2 = products.FindAll(x => ProductHelper.matchProduct(
                             x,
-                            k-ConsoleKey.D0,
+                            k - ConsoleKey.D0,
                             searchString)
                         );
                 viewProducts(ref products2);
             }
         }
 
-        private static void newProduct() {
+        private static void newProduct()
+        {
             Console.Clear();
             Product p = ProductHelper.Input("Please enter new product information");
-            if (products.Exists(x => x.Code == p.Code)) {
+            if (products.Exists(x => x.Code == p.Code))
+            {
                 Console.WriteLine("Product code " + p.Code + " is duplicated. Please check and enter product again.");
-                if (ConsoleHelper.Confirm("Re-enter information?")) {
+                if (ConsoleHelper.Confirm("Re-enter information?"))
+                {
                     newProduct();
                     return;
                 }
             }
             products.Add(p);
             Console.WriteLine("Product " + p.Name + " added. (Total: " + products.Count + ")");
-            if (ConsoleHelper.Confirm("Do you want to add an other product? ")) {
+            if (ConsoleHelper.Confirm("Do you want to add an other product? "))
+            {
                 newProduct();
             }
         }
 
 
-        private static void editProduct(List<Product> products) {
+        private static void editProduct(List<Product> products)
+        {
             var p = ConsoleHelper.TableSelect(products, "Select product # to update");
             ProductHelper.Edit(p);
             Console.Write("Product " + p.Name + " has been updated.");
             Console.ReadLine();
         }
 
-        private static void deleteProduct(List<Product> products) {
+        private static void deleteProduct(List<Product> products)
+        {
             var p = ConsoleHelper.TableSelect(products, "Select product # to delete");
             ProductHelper.Delete(p);
             Console.Write("Product " + p.Name + " has been deleted.");
             Console.ReadLine();
         }
 
-        private static void newCategory() {
+        private static void newCategory()
+        {
             Console.Clear();
             string c = ConsoleHelper.ReadLine("Please enter new category");
-            if (!Category.Has(c)) {
+            if (!Category.Has(c))
+            {
                 Category.Add(c);
                 Console.WriteLine("Category " + c + " added. (Total: " + Category.Count + ")");
             }
-            else {
-                Console.WriteLine("Category " + c + " already exists. (Total: "+ Category.Count + ")");
+            else
+            {
+                Console.WriteLine("Category " + c + " already exists. (Total: " + Category.Count + ")");
             }
-            if (ConsoleHelper.Confirm("Do you want to add an other category? ")) {
+            if (ConsoleHelper.Confirm("Do you want to add an other category? "))
+            {
                 newCategory();
             }
         }
