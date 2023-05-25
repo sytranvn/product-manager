@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace ProductManager
 {
     public struct Product
@@ -15,7 +17,13 @@ namespace ProductManager
         {
             this.Code = code;
             this.Name = name;
-            DateTime.TryParse(expiryDate, out this.ExpiryDate);
+            DateTime.TryParseExact(
+                expiryDate,
+                "dd/MM/yyyy",
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out this.ExpiryDate
+            );
             this.Company = company;
             this.YearOfManufacture = year;
             this.Category = category;
@@ -60,18 +68,33 @@ namespace ProductManager
     {
         public static Product Input(string note)
         {
-            Product p;
+            Product p = new Product();
             Console.WriteLine(note);
             p.Code = ConsoleHelper.ReadLine("Code");
             p.Name = ConsoleHelper.ReadLine("Name");
             string expiryDate = "";
             string nextYear = DateTime.Now.AddYears(1).ToString("dd/MM/yyyy");
-            while (!DateTime.TryParse(expiryDate, out p.ExpiryDate))
+            bool parsed = false;
+            while (!parsed)
             {
+                parsed = DateTime.TryParseExact(
+                    expiryDate,
+                    "dd/MM/yyyy",
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out p.ExpiryDate
+                );
                 expiryDate = ConsoleHelper.ReadLine("Expiry date", nextYear);
             }
             p.Company = ConsoleHelper.ReadLine("Company");
-            p.YearOfManufacture = int.Parse(ConsoleHelper.ReadLine("Year of manufacture", DateTime.Now.Year.ToString()));
+            parsed = false;
+            while (!parsed)
+            {
+                parsed = int.TryParse(
+                    ConsoleHelper.ReadLine("Year of manufacture", DateTime.Now.Year.ToString()),
+                    out p.YearOfManufacture
+                );
+            }
             var category = ConsoleHelper.ReadLine("Category");
             if (Category.Has(category))
             {
