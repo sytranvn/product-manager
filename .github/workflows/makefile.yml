@@ -14,11 +14,10 @@ jobs:
 
     - name: Build
       run: make
-      
+
     - name: Zip
-      run: tar -zcvf release.tar.gz ./bin
-      
+      run: tar -zcvf release.tar.gz ./release
+
     - uses: actions/upload-artifact@v3.1.2
       with:
         path: release.tar.gz
-        
