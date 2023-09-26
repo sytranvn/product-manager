@@ -1,3 +1,4 @@
+![Static Badge](https://img.shields.io/badge/done-%E2%9C%94%EF%B8%8F-green)
 # product-manager
 ```
      ______               _                            
